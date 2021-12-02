@@ -15,10 +15,10 @@
 
   // Pengaturan Posisi Peta (Titik Tengah Peta)
   var map = L.map('map', {
-    center: [-0.5372011680278825, 117.1243113156709],
+    center: [-0.5372011680278825, 117.1253113156709],
     zoom: 17,
     zoomControl: false,
-    layers: [batas]
+    layers: [batas,gedung]
   });
 
   // Peta Dasar (Basemap)
@@ -73,20 +73,20 @@
     'Google Maps': GoogleMaps
   };
   var groupedOverlays = {
-    "Peta Dasar": {
+    "Data Batas": {
       'Batas Politani': batas,
       'Semua Gedung': gedung
     },
     "Gedung Kuliah": {
       'Jurusan Manajemen Hutan': gedungjmh,
       'Jurusan Teknologi Hasil Hutan': gedungjthh,
-      'Jurusan Pertanian': gedungjp,
+      'Jurusan Perkebunan': gedungjp,
       'Jurusan Teknik dan Informatika': gedungjti
     },
     "Laboratorium": {
       'Lab. Jur. Manajemen Hutan': labjmh,
       'Lab. Jur. Teknologi Hasil Hutan': labjthh,
-      'Lab. Jur. Pertanian': labjp,
+      'Lab. Jur. Perkebunan': labjp,
       'Lab. Jur. Teknik dan Informatika': labjti
     }
   };
@@ -140,16 +140,17 @@
   }).addTo(map);
 
   /* north arrow */
-  // var north = L.control({
-  //   position: "bottomleft"
-  // });
-  // north.onAdd = function(map) {
-  //   var div = L.DomUtil.create("div", "info legend");
-  //   div.innerHTML = '<img src="assets/north-arrow.png" style=width:120px>';
-  //   return div;
-  // }
-  // north.addTo(map);
+  var north = L.control({
+    position: "bottomright"
+  });
+  north.onAdd = function(map) {
+    var div = L.DomUtil.create("div", "info legend");
+    div.innerHTML = '<img src="assets/north-arrow.png" style=width:120px>';
+    return div;
+  }
+  north.addTo(map);
 
+  
 
   // Menampilkan data batas Politani
   <?php
@@ -168,12 +169,126 @@
     ?>
     var polygon = L.polygon(<?php echo $dg['koordinat']; ?>, {
       color: 'blue',
-      fillOpacity: .6
-    }).addTo(gedung);
+      fillOpacity: 0
+    }).addTo(gedung).bindPopup("<center><img src='assets/img/fotogedung/<?php echo $dg['kode_gedung']; ?>.JPG' ><br><b><?php echo $dg['nama_gedung']; ?></b></center><br><?php echo $dg['pemanfaatan']; ?>");
     <?php
-  }
+  };
   ?>
 
-  // Menampilkan data gendung JMH
+  // Menampilkan data gedung JMH
+  <?php
+  $data_gedung = mysqli_query($koneksi, "SELECT * FROM data_gedung WHERE kul_jmh=1");
+  while ($dg = mysqli_fetch_array($data_gedung)) {
+    ?>
+    var polygon = L.polygon(<?php echo $dg['koordinat']; ?>, {
+      color: 'green',
+      fillOpacity: 1
+    }).addTo(gedungjmh).bindPopup("<center><img src='assets/img/fotogedung/<?php echo $dg['kode_gedung']; ?>.JPG' ><br><b><?php echo $dg['nama_gedung']; ?></b></center><br><?php echo $dg['pemanfaatan']; ?>");
+    <?php
+  };
+  ?>
+
+  // Menampilkan data gedung JTHH
+  <?php
+  $data_gedung = mysqli_query($koneksi, "SELECT * FROM data_gedung WHERE kul_jthh=1");
+  while ($dg = mysqli_fetch_array($data_gedung)) {
+    ?>
+    var polygon = L.polygon(<?php echo $dg['koordinat']; ?>, {
+      color: 'red',
+      fillOpacity: 1
+    }).addTo(gedungjthh).bindPopup("<center><img src='assets/img/fotogedung/<?php echo $dg['kode_gedung']; ?>.JPG' ><br><b><?php echo $dg['nama_gedung']; ?></b></center><br><?php echo $dg['pemanfaatan']; ?>");
+    <?php
+  };
+  ?>
+
+  // Menampilkan data gedung JP
+  <?php
+  $data_gedung = mysqli_query($koneksi, "SELECT * FROM data_gedung WHERE kul_jp=1");
+  while ($dg = mysqli_fetch_array($data_gedung)) {
+    ?>
+    var polygon = L.polygon(<?php echo $dg['koordinat']; ?>, {
+      color: 'yellow',
+      fillOpacity: 1
+    }).addTo(gedungjp).bindPopup("<center><img src='assets/img/fotogedung/<?php echo $dg['kode_gedung']; ?>.JPG' ><br><b><?php echo $dg['nama_gedung']; ?></b></center><br><?php echo $dg['pemanfaatan']; ?>");
+    <?php
+  };
+  ?>
+
+  // Menampilkan data gedung JTI
+  <?php
+  $data_gedung = mysqli_query($koneksi, "SELECT * FROM data_gedung WHERE kul_jti=1");
+  while ($dg = mysqli_fetch_array($data_gedung)) {
+    ?>
+    var polygon = L.polygon(<?php echo $dg['koordinat']; ?>, {
+      color: 'brown',
+      fillOpacity: 1
+    }).addTo(gedungjti).bindPopup("<center><img src='assets/img/fotogedung/<?php echo $dg['kode_gedung']; ?>.JPG' ><br><b><?php echo $dg['nama_gedung']; ?></b></center><br><?php echo $dg['pemanfaatan']; ?>");
+    <?php
+  };
+  ?>
+
+  // Menampilkan data Lab JMH
+  <?php
+  $data_lab = mysqli_query($koneksi, "SELECT * FROM data_laboratorium
+        INNER JOIN data_gedung ON data_laboratorium.gedung COLLATE utf8mb4_unicode_ci = data_gedung.kode_gedung
+        where jurusan='Manajemen Hutan'
+        ");
+  while ($dlab = mysqli_fetch_array($data_lab)) {
+    ?>
+    var polygon = L.polygon(<?php echo $dlab['koordinat']; ?>, {
+      color: 'green',
+      fillOpacity: 0
+    }).addTo(labjmh).bindPopup("<?php echo $dlab['nama_lab']; ?>");
+    <?php
+  };
+  ?>
+
+  // Menampilkan data Lab JTHH
+  <?php
+  $data_lab = mysqli_query($koneksi, "SELECT * FROM data_laboratorium
+        INNER JOIN data_gedung ON data_laboratorium.gedung COLLATE utf8mb4_unicode_ci = data_gedung.kode_gedung
+        where jurusan='Teknologi Hasil Hutan'
+        ");
+  while ($dlab = mysqli_fetch_array($data_lab)) {
+    ?>
+    var polygon = L.polygon(<?php echo $dlab['koordinat']; ?>, {
+      color: 'red',
+      fillOpacity: 0
+    }).addTo(labjthh).bindPopup("<?php echo $dlab['nama_lab']; ?>");
+    <?php
+  };
+  ?>
+
+  // Menampilkan data Lab JP
+  <?php
+  $data_lab = mysqli_query($koneksi, "SELECT * FROM data_laboratorium
+        INNER JOIN data_gedung ON data_laboratorium.gedung COLLATE utf8mb4_unicode_ci = data_gedung.kode_gedung
+        where jurusan='Perkebunan'
+        ");
+  while ($dlab = mysqli_fetch_array($data_lab)) {
+    ?>
+    var polygon = L.polygon(<?php echo $dlab['koordinat']; ?>, {
+      color: 'yellow',
+      fillOpacity: 0
+    }).addTo(labjp).bindPopup("<?php echo $dlab['nama_lab']; ?>");
+    <?php
+  };
+  ?>
+
+  // Menampilkan data Lab JP
+  <?php
+  $data_lab = mysqli_query($koneksi, "SELECT * FROM data_laboratorium
+        INNER JOIN data_gedung ON data_laboratorium.gedung COLLATE utf8mb4_unicode_ci = data_gedung.kode_gedung
+        where jurusan='Teknik dan Informatika'
+        ");
+  while ($dlab = mysqli_fetch_array($data_lab)) {
+    ?>
+    var polygon = L.polygon(<?php echo $dlab['koordinat']; ?>, {
+      color: 'brown',
+      fillOpacity: 0
+    }).addTo(labjti).bindPopup("<?php echo $dlab['nama_lab']; ?>");
+    <?php
+  };
+  ?>
 
 </script>

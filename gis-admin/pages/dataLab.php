@@ -23,40 +23,37 @@
                   <table id="example1" class="table table-bordered table-striped">
                     <thead>
                       <tr>
-                        <th>Rendering engine</th>
-                        <th>Browser</th>
-                        <th>Platform(s)</th>
-                        <th>Engine version</th>
-                        <th>CSS grade</th>
+                        <th>No</th>
+                        <th>Nama Lab</th>
+                        <th>Jurusan(s)</th>
+                        <th>Prodi</th>
+                        <th>Kode Gedung</th>
+                        <th>Nama Gedung</th>
                       </tr>
                     </thead>
                     <tbody>
+                    <?php
+                        $no = 1;
+                        $query = "SELECT * FROM data_laboratorium
+                                INNER JOIN data_gedung ON data_laboratorium.gedung COLLATE utf8mb4_unicode_ci = data_gedung.kode_gedung
+                        ";
+                        $sql_lab = mysqli_query($koneksi, $query) or die (mysqli_error($koneksi));                        
+                        while ($dlab = mysqli_fetch_array($sql_lab)) { ?>                        
+                          
                       <tr>
-                        <td>Trident</td>
-                        <td>Internet
-                          Explorer 4.0</td>
-                        <td>Win 95+</td>
-                        <td> 4</td>
-                        <td>X</td>
+                        <td><?=$no++?></td>
+                        <td><?=$dlab['nama_lab']?></td>
+                        <td><?=$dlab['jurusan']?></td>
+                        <td><?=$dlab['prodi']?></td>
+                        <td><?=$dlab['kode_gedung']?></td>
+                        <td><?=$dlab['nama_gedung']?></td>
+                        
                       </tr>
-                      <tr>
-                        <td>Trident</td>
-                        <td>Internet
-                          Explorer 5.0</td>
-                        <td>Win 95+</td>
-                        <td>5</td>
-                        <td>C</td>
-                      </tr>
+                      <?php
+                        }
+                        ?>
                     </tbody>
-                    <tfoot>
-                      <tr>
-                        <th>Rendering engine</th>
-                        <th>Browser</th>
-                        <th>Platform(s)</th>
-                        <th>Engine version</th>
-                        <th>CSS grade</th>
-                      </tr>
-                    </tfoot>
+                    
                   </table>
                 </div><!-- /.box-body -->
               </div><!-- /.box -->

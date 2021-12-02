@@ -33,14 +33,13 @@
                       <?php
                         $no = 1;                      
                         $sql = $koneksi->query("select * from data_gedung order by kode_gedung asc");            
-                        while ($data=$sql->fetch_assoc()) {
-                          
+                        while ($data=$sql->fetch_assoc()) {                         
                         
                       ?>
                       <tr>
                         <td><?php echo $no++; ?></td>
                         <td><?php echo $data['kode_gedung']; ?></td>
-                        <td><?php echo $data['keterangan']; ?></td>
+                        <td><?php echo $data['nama_gedung']; ?></td>
                         <td>
                           <a href="?p=dataGedung&aksi=detail&kode=<?php echo $data['kode_gedung']; ?>" class="btn-sm btn-info"><i class="fa fa-eye"></i> Detail</a>
                         </td>
